@@ -21,6 +21,7 @@ teardown() {
     rm -rf puck puck2 puck3 node_modules .serverless .requirements.zip .requirements-cache \
         foobar package-lock.json serverless-python-requirements-*.tgz
     if [ -f serverless.yml.bak ]; then mv serverless.yml.bak serverless.yml; fi
+    if [ -f slimPatterns.yml ]; then rm -f slimPatterns.yml; fi
     if [ -d "${USR_CACHE_DIR}" ] ; then
         rm -Rf "${USR_CACHE_DIR}"
     fi
@@ -65,10 +66,9 @@ teardown() {
 
 @test "py3.6 can package flask with slim & slimPatterns options" {
     cd tests/base
-    mv _slimPatterns.yml slimPatterns.yml
+    cat _slimPatterns.yml > slimPatterns.yml
     npm i $(npm pack ../..)
     sls --slim=true package
-    mv slimPatterns.yml _slimPatterns.yml    
     unzip .serverless/sls-py-req-test.zip -d puck
     ls puck/flask
     test $(find puck -name "*.pyc" | wc -l) -eq 0
@@ -132,11 +132,10 @@ teardown() {
 
 @test "py3.6 can package flask with slim & dockerizePip & slimPatterns options" {
     cd tests/base
-    mv _slimPatterns.yml slimPatterns.yml
+    cat _slimPatterns.yml > slimPatterns.yml
     npm i $(npm pack ../..)
     ! uname -sm|grep Linux || groups|grep docker || id -u|egrep '^0$' || skip "can't dockerize on linux if not root & not in docker group"
     sls --dockerizePip=true --slim=true package
-    mv slimPatterns.yml _slimPatterns.yml    
     unzip .serverless/sls-py-req-test.zip -d puck
     ls puck/flask
     test $(find puck -name "*.pyc" | wc -l) -eq 0
@@ -287,10 +286,9 @@ teardown() {
 
 @test "py2.7 can package flask with slim & dockerizePip & slimPatterns options" {
     cd tests/base
-    mv _slimPatterns.yml slimPatterns.yml
+    cat _slimPatterns.yml > slimPatterns.yml
     npm i $(npm pack ../..)
     sls --runtime=python2.7 --slim=true packag
-    mv slimPatterns.yml _slimPatterns.yml    
     unzip .serverless/sls-py-req-test.zip -d puck
     ls puck/flask
     test $(find puck -name "*.pyc" | wc -l) -eq 0
@@ -353,11 +351,10 @@ teardown() {
 
 @test "py2.7 can package flask with slim & dockerizePip & slimPatterns options" {
     cd tests/base
-    mv _slimPatterns.yml slimPatterns.yml
+    cat _slimPatterns.yml > slimPatterns.yml
     npm i $(npm pack ../..)
     ! uname -sm|grep Linux || groups|grep docker || id -u|egrep '^0$' || skip "can't dockerize on linux if not root & not in docker group"
     sls --dockerizePip=true --slim=true --runtime=python2.7 package
-    mv slimPatterns.yml _slimPatterns.yml    
     unzip .serverless/sls-py-req-test.zip -d puck
     ls puck/flask
     test $(find puck -name "*.pyc" | wc -l) -eq 0
@@ -384,9 +381,8 @@ teardown() {
 @test "pipenv py3.6 can package flask with slim & slimPatterns option" {
     cd tests/pipenv
     npm i $(npm pack ../..)
-    mv _slimPatterns.yml slimPatterns.yml
+    cat _slimPatterns.yml > slimPatterns.yml
     sls --slim=true package
-    mv slimPatterns.yml _slimPatterns.yml    
     unzip .serverless/sls-py-req-test.zip -d puck
     ls puck/flask
     test $(find puck -name "*.pyc" | wc -l) -eq 0
